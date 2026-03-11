@@ -1,95 +1,100 @@
 # Book My Stay App
 
-## Use Case 2: Basic Room Types and Static Availability
+## Use Case 4: Room Search & Availability Check
 
-This use case extends the Hotel Booking Management System by introducing **object-oriented domain modeling**. The goal is to demonstrate how inheritance, abstraction, and polymorphism can be used to represent different room types in a hotel system before introducing more complex data structures for inventory management.
+This use case introduces the ability for guests to search and view available rooms without modifying the system state. The goal is to provide a safe and controlled way to retrieve information from the system while maintaining a clear separation between read-only operations and inventory updates.
 
-The system defines different types of hotel rooms and displays their details along with their current availability using simple variables.
+The search functionality retrieves room availability from the centralized inventory and displays only those room types that currently have available rooms.
 
 ---
 
 ## Goal
 
-Introduce object modeling through inheritance and abstraction so that students can focus on **domain design** before implementing data structures for optimization.
+Enable guests to view available rooms and their details without modifying the system state. This reinforces safe data access and separation of responsibilities.
 
 ---
 
-## Actor
+## Actors
 
-User
+Guest
+Initiates a room search to view available room options.
 
-The user runs the application from the command line or an IDE to view predefined room types and their availability.
+Search Service
+Handles read-only access to inventory and room information.
 
 ---
 
 ## Flow of Execution
 
-1. The user runs the application.
-2. Room objects representing different room types are created.
-3. Availability for each room type is stored using simple variables.
-4. Room details and availability are printed to the console.
-5. The application terminates.
+1. The guest initiates a room search request.
+2. The system retrieves availability data from the centralized inventory.
+3. Room details and pricing are obtained from room objects.
+4. Room types with zero availability are filtered out.
+5. Available rooms and their details are displayed.
+6. The system state remains unchanged.
 
 ---
 
 ## Key Java Concepts Used
 
-### Abstract Class
+### Read-Only Access
 
-An abstract class named `Room` represents the generalized concept of a room.
-It defines common attributes and behavior shared by all room types and cannot be instantiated directly.
+Search operations only read data from the inventory. No updates are performed during search operations, ensuring system stability.
 
-### Inheritance
+---
 
-Concrete room classes such as `SingleRoom`, `DoubleRoom`, and `SuiteRoom` extend the abstract `Room` class.
-This allows shared properties to be reused while allowing each room type to define its own characteristics.
+### Defensive Programming
 
-### Polymorphism
+The search logic verifies that only room types with availability greater than zero are displayed.
 
-Room objects are referenced using the `Room` type.
-This allows different room implementations to be handled uniformly.
+---
 
-### Encapsulation
+### Separation of Concerns
 
-Room attributes such as room type, number of beds, and price are encapsulated within the `Room` class and accessed through defined methods.
+Search functionality is separated from inventory updates and booking logic. Searching only retrieves information and does not affect system state.
 
-### Static Availability Representation
+---
 
-Room availability is stored using individual variables instead of data structures.
-This highlights the limitations of static state management and prepares the system for future improvements.
+### Inventory as State Holder
 
-### Separation of Domain and State
+The inventory component stores the current availability of rooms and provides access to that data.
 
-Room objects represent **what a room is**, while availability variables represent **the current system state**.
+---
+
+### Domain Model Usage
+
+Room objects contain descriptive information such as room type, number of beds, and pricing. This prevents duplication of room data across system components.
+
+---
+
+### Validation Logic
+
+Room types with zero availability are filtered out so guests only see rooms that can actually be booked.
 
 ---
 
 ## Key Requirements
 
-* Define an abstract `Room` class with common attributes.
-* Create concrete classes for:
-
-    * `SingleRoom`
-    * `DoubleRoom`
-    * `SuiteRoom`
-* Initialize room objects in the application entry point.
-* Store room availability using simple variables.
-* Display room details and availability to the console.
+* Retrieve room availability from the centralized inventory
+* Display only room types with availability greater than zero
+* Show room details and pricing using room objects
+* Ensure inventory data is not modified during search operations
+* Maintain a clear boundary between search and booking logic
 
 ---
 
 ## How to Compile and Run
 
-### Compile the Program
+Compile the program:
 
 ```bash
-javac UseCase2RoomInitialization.java
+javac UseCase4RoomSearch.java
 ```
 
-### Run the Program
+Run the program:
 
 ```bash
-java UseCase2RoomInitialization
+java UseCase4RoomSearch
 ```
 
 ---
@@ -97,39 +102,36 @@ java UseCase2RoomInitialization
 ## Example Output
 
 ```
-Book My Stay - Hotel Booking System v2.1
+Book My Stay - Hotel Booking System v4.1
 
-Single Room Details:
+Available Rooms:
+
 Room Type: Single Room
 Beds: 1
 Price per night: $100.0
-Available Rooms: 10
+Available: 10
+--------------------------
 
-Double Room Details:
 Room Type: Double Room
 Beds: 2
 Price per night: $180.0
-Available Rooms: 5
+Available: 5
+--------------------------
 
-Suite Room Details:
-Room Type: Suite Room
-Beds: 3
-Price per night: $300.0
-Available Rooms: 2
+Search completed. No inventory changes were made.
 ```
 
 ---
 
-## Benefits of This Use Case
+## Key Benefits
 
-* Demonstrates abstraction and inheritance in a real-world scenario
-* Introduces structured domain modeling for hotel rooms
-* Prepares the system for scalable inventory management in later use cases
-* Establishes a clean separation between domain objects and application state
+* Guests can view accurate room availability
+* Inventory state remains protected from accidental modification
+* Clear separation between read-only and write operations
+* Improves system reliability and maintainability
 
 ---
 
 ## Drawbacks of Previous Use Case
 
-Use Case 1 focused only on application startup and execution flow.
-No domain modeling or business logic was introduced, limiting the realism of the system.
+Use Case 3 introduced centralized inventory management but did not explicitly separate read and write access. Without this separation, inventory could potentially be modified during search operations, leading to unintended system behavior.
