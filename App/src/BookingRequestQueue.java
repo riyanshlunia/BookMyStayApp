@@ -2,33 +2,25 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
- * Manages incoming booking requests using FIFO queue.
+ * Stores booking requests in FIFO order.
  */
 public class BookingRequestQueue {
 
-    private Queue<Reservation> requestQueue;
+    private Queue<Reservation> queue;
 
     public BookingRequestQueue() {
-        requestQueue = new LinkedList<>();
+        queue = new LinkedList<>();
     }
 
-    /**
-     * Add booking request to queue
-     */
     public void addRequest(Reservation reservation) {
-        requestQueue.add(reservation);
-        System.out.println("Booking request added for " + reservation.getGuestName());
+        queue.add(reservation);
     }
 
-    /**
-     * Display all queued requests
-     */
-    public void displayRequests() {
+    public Reservation getNextRequest() {
+        return queue.poll();
+    }
 
-        System.out.println("\nCurrent Booking Queue:");
-
-        for (Reservation r : requestQueue) {
-            r.displayReservation();
-        }
+    public boolean isEmpty() {
+        return queue.isEmpty();
     }
 }
