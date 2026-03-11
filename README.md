@@ -1,86 +1,89 @@
 # Book My Stay App
 
-## Use Case 5: Booking Request (First-Come-First-Served)
+## Use Case 6: Reservation Confirmation & Room Allocation
 
-This use case introduces a booking request intake mechanism that allows the system to collect guest booking requests before they are processed by the allocation system. The objective is to handle multiple booking requests fairly while preserving the order in which requests arrive.
+This use case introduces the reservation confirmation process where booking requests are processed and rooms are allocated safely. The system ensures that each confirmed reservation receives a unique room ID while maintaining inventory consistency.
 
-A queue data structure is used to store booking requests, ensuring that they are processed in a First-Come-First-Served (FIFO) order.
+The booking service processes requests from the queue and performs controlled allocation by validating availability and updating inventory immediately.
 
 ---
 
 ## Goal
 
-Handle multiple booking requests fairly by introducing a request intake mechanism that preserves arrival order, reflecting real-world booking behavior during peak demand.
+Confirm booking requests by assigning rooms safely while ensuring inventory consistency and preventing double booking under all circumstances.
 
 ---
 
 ## Actors
 
-Reservation
-Represents a guest's intention to book a specific room type.
+Booking Service
+Processes queued booking requests and performs room allocation.
 
-Booking Request Queue
-Manages incoming booking requests and maintains their order.
+Inventory Service
+Maintains and updates room availability state.
 
 ---
 
 ## Flow of Execution
 
-1. A guest submits a booking request.
-2. The request is added to the booking queue.
-3. Requests are stored in arrival order.
-4. Queued requests wait for processing by the allocation system.
-5. No inventory mutation occurs at this stage.
+1. A booking request is removed from the request queue.
+2. The system checks availability for the requested room type.
+3. A unique room ID is generated.
+4. The room ID is recorded to prevent reuse.
+5. Inventory count is updated immediately.
+6. Reservation is confirmed.
 
 ---
 
 ## Key Java Concepts Used
 
-### Queue Data Structure
+### Set Data Structure
 
-A `Queue<Reservation>` is used to store booking requests.
-
-Example:
+A `Set<String>` is used to store allocated room IDs.
 
 ```java
-Queue<Reservation> requestQueue = new LinkedList<>();
+Set<String> allocatedRooms = new HashSet<>();
 ```
 
-Queues naturally model waiting lines where elements are processed sequentially.
+Sets enforce uniqueness, preventing duplicate room assignments.
 
 ---
 
-### FIFO Principle
+### HashMap Mapping
 
-FIFO (First-Come-First-Served) ensures that the earliest booking request is processed first. This ensures fairness in booking request handling.
+A `HashMap<String, Set<String>>` maps each room type to its allocated room IDs.
 
----
-
-### Fairness
-
-Using a queue guarantees that no request can bypass another request. All guests are treated equally based on arrival order.
+This allows grouped tracking of assigned rooms.
 
 ---
 
-### Request Ordering
+### FIFO Queue Processing
 
-The queue preserves insertion order automatically, eliminating the need for manual sorting or timestamp comparison.
+Booking requests are processed in FIFO order using a queue.
+
+This ensures fairness and predictable processing order.
 
 ---
 
-### Decoupling Request Intake from Allocation
+### Atomic Allocation Logic
 
-Booking requests are collected first and processed later. This separation allows the system to manage high demand and handle allocation more safely.
+Room allocation and inventory updates occur together as one logical unit, preventing partial system updates.
+
+---
+
+### Inventory Synchronization
+
+Inventory is updated immediately after allocation to maintain accurate availability.
 
 ---
 
 ## Key Requirements
 
-* Accept booking requests from guests
-* Store requests in a queue structure
-* Preserve request arrival order
-* Avoid room allocation at this stage
-* Prepare requests for later processing
+* Retrieve booking requests from the queue in FIFO order
+* Generate a unique room ID for every confirmed reservation
+* Prevent reuse of room IDs
+* Update inventory immediately after allocation
+* Maintain consistent system state
 
 ---
 
@@ -88,42 +91,27 @@ Booking requests are collected first and processed later. This separation allows
 
 Compile the program:
 
-```bash
-javac UseCase5BookingRequestQueue.java
+```
+javac UseCase6RoomAllocationService.java
 ```
 
 Run the program:
 
-```bash
-java UseCase5BookingRequestQueue
 ```
-
----
-
-## Example Output
-
-```
-Booking request added for Alice
-Booking request added for Bob
-Booking request added for Charlie
-
-Current Booking Queue:
-Guest: Alice | Requested Room: Single Room
-Guest: Bob | Requested Room: Double Room
-Guest: Charlie | Requested Room: Suite Room
+java UseCase6RoomAllocationService
 ```
 
 ---
 
 ## Key Benefits
 
-* Fair booking request handling
-* Predictable system behavior during peak demand
-* Simplified coordination before allocation
-* Maintains request order automatically
+* Guaranteed uniqueness of room assignments
+* Immediate synchronization between booking and inventory
+* Prevention of double booking scenarios
+* Consistent and reliable reservation processing
 
 ---
 
 ## Drawbacks of Previous Use Case
 
-Use Case 4 allowed guests to view available rooms but did not handle booking intent. Without a request intake mechanism, simultaneous booking attempts could not be handled fairly.
+Use Case 5 introduced booking request ordering but did not confirm reservations or assign rooms. Without allocation and uniqueness enforcement, queued requests could still result in conflicting assignments.
