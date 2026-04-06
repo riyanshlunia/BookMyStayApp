@@ -1,47 +1,50 @@
 # Book My Stay App
 
-## Use Case 8: Booking History & Reporting
+## Use Case 9: Error Handling & Validation
 
-This use case introduces historical tracking of confirmed bookings to provide operational visibility, enable audits, and support reporting. The system maintains booking history in memory while treating it as persistent data for analysis purposes.
+This use case introduces structured validation and error handling to improve system reliability. The system ensures that invalid inputs and inconsistent states are detected early and handled gracefully without affecting overall application stability.
 
-The booking history stores confirmed reservations, and a reporting service generates summaries and insights without modifying stored data.
+Validation logic is applied before processing bookings, and custom exceptions are used to represent domain-specific errors.
 
 ---
 
 ## Goal
 
-Maintain a history of confirmed bookings and generate reports to support administrative analysis and operational visibility.
+Ensure system reliability by validating inputs, preventing invalid state changes, and handling errors gracefully.
 
 ---
 
 ## Actors
 
-Admin  
-Reviews booking history and generates reports.
+Guest  
+Provides booking input that must be validated.
 
-Booking History  
-Stores confirmed reservations in chronological order.
-
-Booking Report Service  
-Generates summaries and reports from stored booking data.
+Invalid Booking Validator  
+Validates input and system constraints before processing.
 
 ---
 
 ## Flow of Execution
 
-1. A booking is successfully confirmed.
-2. The reservation is added to booking history.
-3. Booking history maintains records in insertion order.
-4. Admin requests booking history or reports.
-5. Stored reservations are retrieved and displayed.
+1. Guest provides booking input.
+2. System validates input values and constraints.
+3. If validation fails, an error is raised immediately.
+4. A meaningful error message is displayed.
+5. The system continues running without crashing.
 
 ---
 
 ## Key Java Concepts Used
 
-### List Data Structure
+### Input Validation
 
-A `List<Reservation>` is used to store confirmed bookings.
+Validation ensures incoming data follows expected rules before processing.
+
+---
+
+### Custom Exceptions
+
+Custom exception `InvalidBookingException` is used to represent invalid scenarios.
 
 ```java
-List<Reservation> history = new ArrayList<>();
+class InvalidBookingException extends Exception
