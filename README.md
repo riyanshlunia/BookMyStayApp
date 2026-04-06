@@ -1,47 +1,47 @@
 # Book My Stay App
 
-## Use Case 7: Add-On Service Selection
+## Use Case 8: Booking History & Reporting
 
-This use case extends the reservation system by allowing guests to select optional add-on services such as breakfast, spa access, and airport pickup. The system ensures that these services are linked to existing reservations without affecting room allocation or inventory state.
+This use case introduces historical tracking of confirmed bookings to provide operational visibility, enable audits, and support reporting. The system maintains booking history in memory while treating it as persistent data for analysis purposes.
 
-The add-on service manager handles the association between reservations and selected services, while cost calculation is performed independently of the core booking process.
+The booking history stores confirmed reservations, and a reporting service generates summaries and insights without modifying stored data.
 
 ---
 
 ## Goal
 
-Enable guests to attach optional services to a reservation while maintaining separation from core booking and inventory logic.
+Maintain a history of confirmed bookings and generate reports to support administrative analysis and operational visibility.
 
 ---
 
 ## Actors
 
-Guest  
-Selects one or more optional services for an existing reservation.
+Admin  
+Reviews booking history and generates reports.
 
-Add-On Service  
-Represents an individual optional offering with a name and cost.
+Booking History  
+Stores confirmed reservations in chronological order.
 
-Add-On Service Manager  
-Maintains mapping between reservations and selected services and calculates additional costs.
+Booking Report Service  
+Generates summaries and reports from stored booking data.
 
 ---
 
 ## Flow of Execution
 
-1. The guest selects one or more add-on services.
-2. Selected services are stored in a list.
-3. The list is mapped to the corresponding reservation ID.
-4. Additional cost is calculated based on selected services.
-5. Core booking and inventory remain unchanged.
+1. A booking is successfully confirmed.
+2. The reservation is added to booking history.
+3. Booking history maintains records in insertion order.
+4. Admin requests booking history or reports.
+5. Stored reservations are retrieved and displayed.
 
 ---
 
 ## Key Java Concepts Used
 
-### Map and List Combination
+### List Data Structure
 
-A `Map<String, List<Service>>` is used to map reservation IDs to selected services.
+A `List<Reservation>` is used to store confirmed bookings.
 
 ```java
-Map<String, List<Service>> reservationServices = new HashMap<>();
+List<Reservation> history = new ArrayList<>();
